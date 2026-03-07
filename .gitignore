@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Test coverage
+coverage/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+SETUP_GUIDE.md
+README.md
+.kiro/specs/eventnexus-backend/tasks.md
+.kiro/specs/eventnexus-backend/requirements.md
+.kiro/specs/eventnexus-backend/design.md
+.kiro/specs/eventnexus-backend/.config.kiro
