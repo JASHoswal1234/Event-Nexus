@@ -101,14 +101,28 @@ export const getMyEvents = async () => {
 };
 
 export const getDashboardStats = async () => {
-  const res = await apiClient.get("/events");
-
-  const events = res.data?.events || [];
-
-  return {
-    totalEvents: events.length,
-    totalRegistrations: 0,
-    totalTeams: 0,
-    todayCheckIns: 0,
-  };
+  try {
+    const res = await apiClient.get("/stats");
+    
+    const stats = res.data?.stats || {};
+    
+    return {
+      totalEvents: stats.totalEvents || 0,
+      totalRegistrations: stats.totalRegistrations || 0,
+      totalTeams: stats.totalTeams || 0,
+      totalCheckIns: stats.totalCheckIns || 0,
+    };
+  } catch (error) {
+    console.error('Failed to fetch dashboard stats:', error);
+    // Fallback to basic stats if API fails
+    const eventsRes = await apiClient.get("/events");
+    const events = eventsRes.data?.events || [];
+    
+    return {
+      totalEvents: events.length,
+      totalRegistrations: 0,
+      totalTeams: 0,
+      totalCheckIns: 0,
+    };
+  }
 };

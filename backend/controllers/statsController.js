@@ -23,17 +23,25 @@ const { NotFoundError } = require('../utils/errors');
  * Get system-wide statistics
  * GET /api/stats
  * 
- * @returns {Object} - { totalUsers, totalEvents, totalRegistrations, totalTeams }
+ * @returns {Object} - { totalUsers, totalEvents, totalRegistrations, totalTeams, totalCheckIns }
  * 
  * Requirements: 10.1, 10.2, 10.3, 10.4
  */
 exports.getSystemStats = asyncHandler(async (req, res, next) => {
+  // Get start of today (midnight)
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
   // Count documents in each collection
-  const [totalUsers, totalEvents, totalRegistrations, totalTeams] = await Promise.all([
+  const [totalUsers, totalEvents, totalRegistrations, totalTeams, totalCheckIns] = await Promise.all([
     User.countDocuments(),
     Event.countDocuments(),
     Registration.countDocuments(),
-    Team.countDocuments()
+    Team.countDocuments(),
+    Registration.countDocuments({ 
+      checkedIn: true,
+      checkInTime: { $gte: startOfToday }
+    })
   ]);
 
   res.status(200).json({
@@ -42,7 +50,8 @@ exports.getSystemStats = asyncHandler(async (req, res, next) => {
       totalUsers,
       totalEvents,
       totalRegistrations,
-      totalTeams
+      totalTeams,
+      totalCheckIns
     }
   });
 });
