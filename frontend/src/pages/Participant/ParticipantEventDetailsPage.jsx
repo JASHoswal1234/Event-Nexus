@@ -58,9 +58,20 @@ const ParticipantEventDetailsPage = () => {
       const eventData = await getEventById(eventId);
       setEvent(eventData);
       
-      // Check if user is registered (you might need to add this to the API)
-      // For now, we'll assume they can register
-      setIsRegistered(false);
+      // Check if user is registered from localStorage
+      const storedRegistrations = localStorage.getItem('registeredEvents');
+      if (storedRegistrations) {
+        try {
+          const registeredIds = JSON.parse(storedRegistrations);
+          const isUserRegistered = registeredIds.includes(eventId) || registeredIds.includes(eventData._id);
+          setIsRegistered(isUserRegistered);
+        } catch (e) {
+          console.error('Failed to parse stored registrations:', e);
+          setIsRegistered(false);
+        }
+      } else {
+        setIsRegistered(false);
+      }
       
       // If event requires teams, check if user has a team
       if (eventData.isTeamEvent) {
@@ -91,6 +102,21 @@ const ParticipantEventDetailsPage = () => {
       showToast('Successfully registered for event!', 'success');
       setIsRegistered(true);
       
+      // Update localStorage
+      const storedRegistrations = localStorage.getItem('registeredEvents');
+      let registeredIds = [];
+      if (storedRegistrations) {
+        try {
+          registeredIds = JSON.parse(storedRegistrations);
+        } catch (e) {
+          registeredIds = [];
+        }
+      }
+      if (!registeredIds.includes(eventId)) {
+        registeredIds.push(eventId);
+        localStorage.setItem('registeredEvents', JSON.stringify(registeredIds));
+      }
+      
       // If team event, fetch team info
       if (event.isTeamEvent) {
         await fetchTeamInfo();
@@ -114,6 +140,18 @@ const ParticipantEventDetailsPage = () => {
       showToast('Registration cancelled', 'success');
       setIsRegistered(false);
       setTeam(null);
+      
+      // Update localStorage
+      const storedRegistrations = localStorage.getItem('registeredEvents');
+      if (storedRegistrations) {
+        try {
+          let registeredIds = JSON.parse(storedRegistrations);
+          registeredIds = registeredIds.filter(id => id !== eventId && id !== event._id);
+          localStorage.setItem('registeredEvents', JSON.stringify(registeredIds));
+        } catch (e) {
+          console.error('Failed to update localStorage:', e);
+        }
+      }
     } catch (error) {
       console.error('Failed to cancel:', error);
       showToast('Failed to cancel registration', 'error');

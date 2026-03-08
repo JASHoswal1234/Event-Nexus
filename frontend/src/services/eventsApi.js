@@ -7,9 +7,7 @@ const normalizeEvent = (event) => {
   return {
     ...event,
     id: event._id || event.id,
-    teamEvent:
-      event.teamEvent !== undefined ? event.teamEvent : event.isTeamEvent,
-    deadline: event.deadline || event.registrationDeadline,
+    venue: event.location || event.venue, // Map location to venue for frontend
   };
 };
 
@@ -37,14 +35,16 @@ export const getEventById = async (id) => {
 
 export const createEvent = async (data) => {
   const payload = {
-    ...data,
-    teamEvent:
-      data.teamEvent !== undefined ? data.teamEvent : data.isTeamEvent,
-    deadline: data.deadline || data.registrationDeadline,
+    title: data.title,
+    description: data.description,
+    date: data.date,
+    location: data.venue, // Map venue to location
+    capacity: Number(data.capacity), // Ensure it's a number
+    registrationDeadline: data.registrationDeadline,
+    mode: data.mode === 'hybrid' ? 'online' : data.mode, // Backend only supports online/offline
   };
 
-  delete payload.isTeamEvent;
-  delete payload.registrationDeadline;
+  console.log('Creating event with payload:', payload); // Debug log
 
   const res = await apiClient.post("/events", payload);
 
@@ -55,14 +55,14 @@ export const createEvent = async (data) => {
 
 export const updateEvent = async (id, data) => {
   const payload = {
-    ...data,
-    teamEvent:
-      data.teamEvent !== undefined ? data.teamEvent : data.isTeamEvent,
-    deadline: data.deadline || data.registrationDeadline,
+    title: data.title,
+    description: data.description,
+    date: data.date,
+    location: data.venue || data.location, // Map venue to location
+    capacity: parseInt(data.capacity),
+    registrationDeadline: data.registrationDeadline,
+    mode: data.mode === 'hybrid' ? 'online' : data.mode, // Backend only supports online/offline
   };
-
-  delete payload.isTeamEvent;
-  delete payload.registrationDeadline;
 
   const res = await apiClient.put(`/events/${id}`, payload);
 
@@ -77,13 +77,27 @@ export const deleteEvent = async (id) => {
 };
 
 export const getMyEvents = async () => {
-  // Backend doesn't have /me/events endpoint
-  // Fetch all events and filter client-side based on registrations
-  const res = await apiClient.get("/events");
-
-  const events = res.data?.events || [];
-
-  return normalizeEvents(events);
+  // Fetch user's registrations by querying all events and checking registration status
+  // Since backend doesn't have a /me/registrations endpoint, we need to:
+  // 1. Get all events
+  // 2. For each event, check if user is registered
+  // This is not optimal but works with current backend API
+  
+  try {
+    const allEventsRes = await apiClient.get("/events");
+    const allEvents = allEventsRes.data?.events || [];
+    
+    // Get user's registrations by checking each event
+    // We'll need to make individual calls or use a different approach
+    // For now, return empty array and let the registration check happen on the events page
+    
+    // Better approach: fetch registrations from localStorage or state management
+    // But since we don't have that, we'll return all events and filter on the client
+    return normalizeEvents(allEvents);
+  } catch (error) {
+    console.error('Failed to fetch my events:', error);
+    return [];
+  }
 };
 
 export const getDashboardStats = async () => {

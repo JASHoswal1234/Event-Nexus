@@ -10,9 +10,31 @@ const normalizeUser = (user) => {
   };
 };
 
-// Backend doesn't have /users/participants endpoint
-// This file is kept for future implementation
+const normalizeUsers = (users) => {
+  if (!Array.isArray(users)) return [];
+  return users.map(normalizeUser);
+};
+
 export const getAllParticipants = async () => {
-  console.warn('getAllParticipants: Backend endpoint not implemented');
-  return { participants: [] };
+  const res = await apiClient.get('/users/participants');
+  
+  const participants = res.data?.participants || [];
+  
+  return {
+    success: res.data?.success,
+    count: res.data?.count || 0,
+    participants: normalizeUsers(participants)
+  };
+};
+
+export const getAllUsers = async () => {
+  const res = await apiClient.get('/users');
+  
+  const users = res.data?.users || [];
+  
+  return {
+    success: res.data?.success,
+    count: res.data?.count || 0,
+    users: normalizeUsers(users)
+  };
 };

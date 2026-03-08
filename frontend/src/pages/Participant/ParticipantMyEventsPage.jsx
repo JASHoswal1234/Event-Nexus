@@ -7,7 +7,7 @@ import Toast from "../../components/common/Toast";
 import Modal from "../../components/common/Modal";
 import InputField from "../../components/forms/InputField";
 import MyEventCard from "../../components/events/MyEventCard";
-import { getMyEvents } from "../../services/eventsApi";
+import { getAllEvents } from "../../services/eventsApi";
 import { createTeam, joinTeam } from "../../services/teamsApi";
 
 const ParticipantMyEventsPage = () => {
@@ -36,8 +36,37 @@ const ParticipantMyEventsPage = () => {
 
   const fetchMyEvents = async () => {
     try {
-      const myEvents = await getMyEvents();
-      setEvents(Array.isArray(myEvents) ? myEvents : []);
+      // Get registered event IDs from localStorage
+      const storedRegistrations = localStorage.getItem('registeredEvents');
+      if (!storedRegistrations) {
+        setEvents([]);
+        setLoading(false);
+        return;
+      }
+
+      let registeredIds = [];
+      try {
+        registeredIds = JSON.parse(storedRegistrations);
+      } catch (e) {
+        console.error('Failed to parse stored registrations:', e);
+        setEvents([]);
+        setLoading(false);
+        return;
+      }
+
+      if (registeredIds.length === 0) {
+        setEvents([]);
+        setLoading(false);
+        return;
+      }
+
+      // Fetch all events and filter by registered IDs
+      const allEvents = await getAllEvents();
+      const myRegisteredEvents = allEvents.filter(event => 
+        registeredIds.includes(event.id) || registeredIds.includes(event._id)
+      );
+      
+      setEvents(Array.isArray(myRegisteredEvents) ? myRegisteredEvents : []);
     } catch (error) {
       console.error('Failed to fetch my events:', error);
       showToast('Failed to load your events. Please try again later.', 'error');

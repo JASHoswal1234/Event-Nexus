@@ -23,6 +23,7 @@ import AdminSettingsPage from '../pages/Admin/AdminSettingsPage';
 import ParticipantEventsPage from '../pages/Participant/ParticipantEventsPage';
 import ParticipantMyEventsPage from '../pages/Participant/ParticipantMyEventsPage';
 import ParticipantEventDetailsPage from '../pages/Participant/ParticipantEventDetailsPage';
+import ParticipantProfilePage from '../pages/Participant/ParticipantProfilePage';
 import FindTeammatesPage from '../pages/Participant/FindTeammatesPage';
 import TeamPage from '../pages/Participant/TeamPage';
 import ParticipantTeamPage from '../pages/Participant/ParticipantTeamPage';
@@ -203,6 +204,13 @@ const AppRouter = () => {
           <ProtectedRoute requiredRole="participant">
             <ParticipantLayout>
               <ParticipantMyEventsPage />
+            </ParticipantLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/participant/profile" element={
+          <ProtectedRoute requiredRole="participant">
+            <ParticipantLayout>
+              <ParticipantProfilePage />
             </ParticipantLayout>
           </ProtectedRoute>
         } />

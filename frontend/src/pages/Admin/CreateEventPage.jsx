@@ -132,21 +132,30 @@ const CreateEventPage = () => {
     setSubmitting(true);
 
     try {
+      console.log('Submitting form data:', formData); // Debug log
       await createEvent(formData);
       showToast('Event created successfully', 'success');
       setTimeout(() => navigate('/admin/events'), 1500);
     } catch (error) {
       console.error('Create failed:', error);
-      const errorMessage = error.response?.data?.message || 'Failed to create event';
-      showToast(errorMessage, 'error');
+      console.error('Error response:', error.response?.data); // Debug log
+      const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Failed to create event';
+      const errorDetails = error.response?.data?.details;
+      
+      if (errorDetails && Array.isArray(errorDetails)) {
+        // Show validation errors
+        const errorMsg = errorDetails.map(e => `${e.field}: ${e.message}`).join(', ');
+        showToast(errorMsg, 'error');
+      } else {
+        showToast(errorMessage, 'error');
+      }
       setSubmitting(false);
     }
   };
 
   const modeOptions = [
     { value: 'online', label: 'Online' },
-    { value: 'offline', label: 'Offline' },
-    { value: 'hybrid', label: 'Hybrid' }
+    { value: 'offline', label: 'Offline' }
   ];
 
   const getVenueLabel = () => {

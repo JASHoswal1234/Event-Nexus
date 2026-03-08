@@ -23,34 +23,36 @@ const regRoutes = require('./routes/regRoutes');
 const teamRoutes = require('./routes/teamRoutes');
 const annRoutes = require('./routes/annRoutes');
 const statsRoutes = require('./routes/statsRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 // Create Express application
 const app = express();
 
 // CORS Configuration
 // Requirements: 14.1, 14.2, 14.3, 14.4
+const allowedOriginsEnv = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map(o => o.trim())
+  : [
+      'http://localhost:3000',
+      'http://localhost:5173', // Vite default
+    ];
+
 const corsOptions = {
-  origin: function (origin, callback) {
+  origin(origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) {
       return callback(null, true);
     }
 
-    // Parse allowed origins from environment variable
-    // Supports single origin or comma-separated list
-    const allowedOrigins = process.env.CORS_ORIGIN 
-      ? process.env.CORS_ORIGIN.split(',').map(o => o.trim())
-      : ['http://localhost:3000'];
-
     // Check if request origin is in allowed list
-    if (allowedOrigins.includes(origin)) {
+    if (allowedOriginsEnv.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true, // Allow cookies and authorization headers
-  optionsSuccessStatus: 200 // Some legacy browsers (IE11) choke on 204
+  credentials: true,          // Allow cookies and authorization headers
+  optionsSuccessStatus: 200,  // Some legacy browsers (IE11) choke on 204
 };
 
 // Apply CORS middleware
@@ -68,13 +70,14 @@ app.use('/api/registrations', regRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/announcements', annRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/users', userRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'EventNexus API is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -83,7 +86,7 @@ app.use((req, res) => {
   res.status(404).json({
     success: false,
     error: 'Not Found',
-    message: `Route ${req.method} ${req.path} not found`
+    message: `Route ${req.method} ${req.path} not found`,
   });
 });
 

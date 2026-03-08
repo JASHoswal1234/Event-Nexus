@@ -16,7 +16,7 @@ const normalizeRegistrations = (registrations) => {
 };
 
 export const registerForEvent = async (eventId) => {
-  const res = await apiClient.post(`/registrations`, { eventId });
+  const res = await apiClient.post(`/registrations/${eventId}`);
   const data = res.data.data || res.data;
   return normalizeRegistration(data.registration || data);
 };
@@ -42,4 +42,23 @@ export const checkInAttendee = async (eventId, userId) => {
 export const cancelRegistration = async (eventId) => {
   const res = await apiClient.delete(`/registrations/${eventId}`);
   return res.data;
+};
+
+export const getMyRegistrations = async () => {
+  // Since backend doesn't have a dedicated endpoint for user's registrations,
+  // we'll need to fetch all events and check registration status
+  // This is a workaround until backend adds /api/registrations/me endpoint
+  try {
+    const eventsRes = await apiClient.get("/events");
+    const allEvents = eventsRes.data?.events || [];
+    
+    // For each event, we need to check if user is registered
+    // We can do this by attempting to register (which will fail if already registered)
+    // Or by checking the event's registrations (admin only)
+    // For now, return empty and rely on the events page to track state
+    return [];
+  } catch (error) {
+    console.error('Failed to fetch registrations:', error);
+    return [];
+  }
 };

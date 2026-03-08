@@ -1,33 +1,55 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Sidebar, SidebarBody, SidebarLink } from '../ui/Sidebar';
+import { LayoutDashboard, Calendar, Users, UsersRound, Megaphone, Settings } from 'lucide-react';
 
 const AdminSidebar = () => {
-  const menuItems = [
-    { path: '/admin/dashboard', label: 'Dashboard' },
-    { path: '/admin/events', label: 'Events' },
-    { path: '/admin/users', label: 'Users' },
-    { path: '/admin/teams', label: 'Teams' },
-    { path: '/admin/announcements', label: 'Announcements' },
-    { path: '/admin/settings', label: 'Settings' },
+  const [open, setOpen] = useState(false);
+
+  const links = [
+    {
+      label: "Dashboard",
+      href: "/admin/dashboard",
+      icon: <LayoutDashboard className="text-gray-700 h-5 w-5 flex-shrink-0" />,
+    },
+    {
+      label: "Events",
+      href: "/admin/events",
+      icon: <Calendar className="text-gray-700 h-5 w-5 flex-shrink-0" />,
+    },
+    {
+      label: "Users",
+      href: "/admin/users",
+      icon: <Users className="text-gray-700 h-5 w-5 flex-shrink-0" />,
+    },
+    {
+      label: "Teams",
+      href: "/admin/teams",
+      icon: <UsersRound className="text-gray-700 h-5 w-5 flex-shrink-0" />,
+    },
+    {
+      label: "Announcements",
+      href: "/admin/announcements",
+      icon: <Megaphone className="text-gray-700 h-5 w-5 flex-shrink-0" />,
+    },
+    {
+      label: "Settings",
+      href: "/admin/settings",
+      icon: <Settings className="text-gray-700 h-5 w-5 flex-shrink-0" />,
+    },
   ];
 
   return (
-    <div className="w-64 bg-gray-800 min-h-screen">
-      <div className="p-4">
-        <h2 className="text-white text-lg font-semibold mb-6">Admin Panel</h2>
-        <nav className="space-y-2">
-          {menuItems.map((item, index) => (
-            <Link
-              key={index}
-              to={item.path}
-              className="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-      </div>
-    </div>
+    <Sidebar open={open} setOpen={setOpen}>
+      <SidebarBody className="justify-between gap-10">
+        <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="mt-8 flex flex-col gap-2">
+            {links.map((link, idx) => (
+              <SidebarLink key={idx} link={link} />
+            ))}
+          </div>
+        </div>
+      </SidebarBody>
+    </Sidebar>
   );
 };
 

@@ -20,13 +20,13 @@ const jwtConfig = require('../config/jwt');
  * Register a new user
  * POST /api/auth/register
  * 
- * @param {Object} req.body - { email: string, password: string }
+ * @param {Object} req.body - { name: string, email: string, password: string, role: string }
  * @returns {Object} - { success: boolean, message: string }
  * 
  * Requirements: 1.1, 1.2, 2.1
  */
 exports.register = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
+  const { name, email, password, role } = req.body;
 
   // Check if user already exists
   const existingUser = await User.findOne({ email });
@@ -36,8 +36,10 @@ exports.register = asyncHandler(async (req, res, next) => {
 
   // Create new user (password will be hashed by pre-save hook)
   const user = await User.create({
+    name,
     email,
-    password
+    password,
+    role: role || 'participant' // Default to participant if not provided
   });
 
   res.status(201).json({
@@ -91,6 +93,7 @@ exports.login = asyncHandler(async (req, res, next) => {
     token,
     user: {
       id: user._id,
+      name: user.name,
       email: user.email,
       role: user.role
     }

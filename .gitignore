@@ -34,3 +34,4 @@ frontend/node_modules/
 backend/.env
 frontend/.env
 backend/README.md
+.kiro/specs/mobile-responsive-design/.config.kiro

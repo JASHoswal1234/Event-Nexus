@@ -9,18 +9,18 @@ const Button = ({
   variant = 'primary',
   size = 'md'
 }) => {
-  const baseClasses = 'px-4 py-2 rounded font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses = 'rounded-full font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variantClasses = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700',
-    outline: 'border border-blue-600 text-blue-600 hover:bg-blue-50',
+    primary: 'bg-black text-white hover:bg-gray-900',
+    outline: 'border border-black text-black hover:bg-gray-50',
     danger: 'bg-red-600 text-white hover:bg-red-700',
   };
   
   const sizeClasses = {
-    sm: 'px-3 py-1 text-sm',
-    md: 'px-4 py-2',
-    lg: 'px-6 py-3 text-lg',
+    sm: 'min-h-[44px] px-4 py-2 text-sm',
+    md: 'min-h-[44px] px-6 py-2.5 text-base',
+    lg: 'min-h-[48px] px-8 py-3 text-lg',
   };
   
   return (

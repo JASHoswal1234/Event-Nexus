@@ -6,7 +6,7 @@ import Badge from "../../components/common/Badge";
 import Spinner from "../../components/common/Spinner";
 import EmptyState from "../../components/common/EmptyState";
 import Toast from "../../components/common/Toast";
-import { getAllEvents } from "../../services/eventsApi";
+import { getAllEvents, getMyEvents } from "../../services/eventsApi";
 import { registerForEvent } from "../../services/registrationsApi";
 
 const ParticipantEventsPage = () => {
@@ -30,6 +30,17 @@ const ParticipantEventsPage = () => {
       try {
         const eventsData = await getAllEvents();
         setEvents(Array.isArray(eventsData) ? eventsData : []);
+        
+        // Load registered events from localStorage
+        const storedRegistrations = localStorage.getItem('registeredEvents');
+        if (storedRegistrations) {
+          try {
+            const registeredIds = JSON.parse(storedRegistrations);
+            setRegisteredEvents(new Set(registeredIds));
+          } catch (e) {
+            console.error('Failed to parse stored registrations:', e);
+          }
+        }
       } catch (error) {
         console.error('Failed to fetch events:', error);
         
@@ -85,6 +96,19 @@ const ParticipantEventsPage = () => {
       
       // Update registered events state
       setRegisteredEvents(prev => new Set(prev).add(eventId));
+      
+      // Persist to localStorage
+      const storedRegistrations = localStorage.getItem('registeredEvents');
+      let registeredIds = [];
+      if (storedRegistrations) {
+        try {
+          registeredIds = JSON.parse(storedRegistrations);
+        } catch (e) {
+          registeredIds = [];
+        }
+      }
+      registeredIds.push(eventId);
+      localStorage.setItem('registeredEvents', JSON.stringify(registeredIds));
       
       // Remove from registering state
       setRegisteringEvents(prev => {
@@ -168,8 +192,21 @@ const ParticipantEventsPage = () => {
             description="There are no events at the moment. Check back later!"
           />
         ) : (
-          events.map((event) => (
+          events.map((event) => {
+            // Generate a consistent image index based on event ID (1-6)
+            const imageIndex = event.id ? ((typeof event.id === 'string' ? event.id.charCodeAt(0) : event.id) % 6) + 1 : 1;
+            
+            return (
             <Card key={event.id}>
+              {/* Image Header */}
+              <div className="h-32 -mx-6 -mt-6 mb-4 rounded-t-lg overflow-hidden">
+                <img 
+                  src={`/${imageIndex}.png`} 
+                  alt={event.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              
               <div className="space-y-3">
                 <div className="flex justify-between items-start">
                   <h3 className="text-lg font-semibold text-gray-900">{event.title}</h3>
@@ -224,7 +261,7 @@ const ParticipantEventsPage = () => {
                 </div>
               </div>
             </Card>
-          ))
+          )})
         )}
       </div>
     </div>
