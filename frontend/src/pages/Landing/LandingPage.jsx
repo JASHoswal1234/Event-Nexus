@@ -37,7 +37,7 @@ const LandingPage = () => {
       {/* Footer */}
       <footer className="py-8 px-6" style={{ backgroundColor: '#e4ddd4' }}>
         <div className="max-w-6xl mx-auto text-center">
-          <p className="text-gray-600">&copy; 2024 EventNexus. All rights reserved.</p>
+          <p className="text-gray-600">&copy; 2026 EventNexus. All rights reserved.</p>
         </div>
       </footer>
     </div>
