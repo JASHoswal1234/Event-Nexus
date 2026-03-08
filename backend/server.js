@@ -44,10 +44,17 @@ const corsOptions = {
       return callback(null, true);
     }
 
+    // In development, allow all origins
+    if (process.env.NODE_ENV === 'development') {
+      return callback(null, true);
+    }
+
     // Check if request origin is in allowed list
     if (allowedOriginsEnv.includes(origin)) {
       callback(null, true);
     } else {
+      console.log('CORS blocked origin:', origin);
+      console.log('Allowed origins:', allowedOriginsEnv);
       callback(new Error('Not allowed by CORS'));
     }
   },
