@@ -1,4 +1,4 @@
-# EventNexus 🎉
+# EventNexus 
 
 > The complete platform for event management - streamline your events with EventNexus
 
