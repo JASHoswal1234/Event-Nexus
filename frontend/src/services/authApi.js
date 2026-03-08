@@ -32,14 +32,5 @@ export const registerUser = async (data) => {
   };
 };
 
-export const getCurrentUser = async () => {
-  const res = await apiClient.get("/auth/me");
-
-  return normalizeUser(res.data?.user || res.data);
-};
-
-export const logoutUser = async () => {
-  const res = await apiClient.post("/auth/logout");
-
-  return res.data;
-};
+// Backend doesn't have /auth/me or /auth/logout endpoints
+// Auth state is managed client-side via JWT tokens

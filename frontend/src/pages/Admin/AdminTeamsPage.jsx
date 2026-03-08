@@ -23,9 +23,11 @@ const AdminTeamsPage = () => {
   const fetchAllTeams = async () => {
     try {
       setLoading(true);
-      // Note: This endpoint might not exist yet - you may need to create it
-      const response = await apiClient.get('/teams');
-      setTeams(response.data?.teams || []);
+      // Backend doesn't have global /teams endpoint
+      // Teams are event-specific, so this page needs event context
+      // For now, show empty state
+      setTeams([]);
+      showToast('Teams are event-specific. View teams from event details page.', 'info');
     } catch (error) {
       console.error('Failed to fetch teams:', error);
       showToast('Failed to load teams', 'error');

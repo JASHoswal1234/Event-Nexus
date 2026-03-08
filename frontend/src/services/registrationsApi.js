@@ -16,7 +16,7 @@ const normalizeRegistrations = (registrations) => {
 };
 
 export const registerForEvent = async (eventId) => {
-  const res = await apiClient.post(`/registrations/${eventId}`);
+  const res = await apiClient.post(`/registrations`, { eventId });
   const data = res.data.data || res.data;
   return normalizeRegistration(data.registration || data);
 };

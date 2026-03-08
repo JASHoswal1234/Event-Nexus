@@ -77,9 +77,11 @@ export const deleteEvent = async (id) => {
 };
 
 export const getMyEvents = async () => {
-  const res = await apiClient.get("/me/events");
+  // Backend doesn't have /me/events endpoint
+  // Fetch all events and filter client-side based on registrations
+  const res = await apiClient.get("/events");
 
-  const events = res.data?.events || res.data?.data || [];
+  const events = res.data?.events || [];
 
   return normalizeEvents(events);
 };

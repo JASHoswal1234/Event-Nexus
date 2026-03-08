@@ -16,24 +16,6 @@ const normalizeAnnouncements = (announcements) => {
 };
 
 export const announcementsApi = {
-  // Get all announcements
-  getAllAnnouncements: async (filters = {}) => {
-    const res = await apiClient.get("/announcements", { params: filters });
-
-    const announcements = res.data?.announcements || [];
-
-    return normalizeAnnouncements(announcements);
-  },
-
-  // Get announcement by ID
-  getAnnouncementById: async (announcementId) => {
-    const res = await apiClient.get(`/announcements/${announcementId}`);
-
-    const announcement = res.data?.announcement || res.data;
-
-    return normalizeAnnouncement(announcement);
-  },
-
   // Get announcements for an event
   getEventAnnouncements: async (eventId) => {
     const res = await apiClient.get(`/announcements/event/${eventId}`);
@@ -52,37 +34,11 @@ export const announcementsApi = {
     return normalizeAnnouncement(announcement);
   },
 
-  // Update announcement
-  updateAnnouncement: async (announcementId, announcementData) => {
-    const res = await apiClient.put(
-      `/announcements/${announcementId}`,
-      announcementData
-    );
-
-    const announcement = res.data?.announcement || res.data;
-
-    return normalizeAnnouncement(announcement);
-  },
-
   // Delete announcement
   deleteAnnouncement: async (announcementId) => {
     const res = await apiClient.delete(`/announcements/${announcementId}`);
 
     return res.data;
-  },
-
-  // Mark as read
-  markAsRead: async (announcementId) => {
-    const res = await apiClient.post(`/announcements/${announcementId}/read`);
-
-    return res.data;
-  },
-
-  // Unread count
-  getUnreadCount: async () => {
-    const res = await apiClient.get("/announcements/unread/count");
-
-    return res.data?.count || 0;
   },
 };
 

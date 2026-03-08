@@ -28,12 +28,10 @@ const FindTeammatesPage = () => {
   const fetchRecommendations = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get(`/teams/recommendations/${eventId}`);
-      setRecommendations(response.data.recommendations || []);
-      
-      if (response.data.message) {
-        showToast(response.data.message, 'info');
-      }
+      // Backend doesn't have /teams/recommendations endpoint
+      // This feature is not yet implemented
+      setRecommendations([]);
+      showToast('Teammate recommendations feature coming soon', 'info');
     } catch (error) {
       console.error('Failed to fetch recommendations:', error);
       showToast('Failed to load recommendations', 'error');

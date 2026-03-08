@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser, getCurrentUser } from '../services/authApi';
+import { loginUser } from '../services/authApi';
 
 const AuthContext = createContext();
 
@@ -11,19 +11,16 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       const storedToken = localStorage.getItem("eventnexus_token");
+      const storedUser = localStorage.getItem("eventnexus_user");
       
-      if (storedToken) {
+      if (storedToken && storedUser) {
         setToken(storedToken);
         try {
-          // Try to get user data with the stored token
-          const userData = await getCurrentUser();
-          setUser(userData);
+          setUser(JSON.parse(storedUser));
         } catch (error) {
-          // If backend is not available or token is invalid, clear token
-          console.error('Failed to validate token:', error);
+          console.error('Failed to parse stored user:', error);
           localStorage.removeItem("eventnexus_token");
-          setToken(null);
-          setUser(null);
+          localStorage.removeItem("eventnexus_user");
         }
       }
       
@@ -48,6 +45,7 @@ export const AuthProvider = ({ children }) => {
       }
       
       localStorage.setItem("eventnexus_token", newToken);
+      localStorage.setItem("eventnexus_user", JSON.stringify(userData));
       setToken(newToken);
       setUser(userData);
       
@@ -62,6 +60,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem("eventnexus_token");
+    localStorage.removeItem("eventnexus_user");
     setToken(null);
     setUser(null);
   };

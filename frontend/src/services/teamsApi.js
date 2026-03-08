@@ -15,8 +15,8 @@ const normalizeTeams = (teams) => {
   return teams.map(normalizeTeam);
 };
 
-export const createTeam = async (eventId, name) => {
-  const res = await apiClient.post("/teams", { eventId, name });
+export const createTeam = async (eventId, name, capacity = 10) => {
+  const res = await apiClient.post("/teams", { eventId, name, capacity });
 
   const team = res.data?.team || res.data;
 
@@ -32,7 +32,7 @@ export const joinTeam = async (joinCode) => {
 };
 
 export const getEventTeams = async (eventId) => {
-  const res = await apiClient.get(`/teams/${eventId}`);
+  const res = await apiClient.get(`/teams/event/${eventId}`);
 
   const teams = res.data?.teams || [];
 

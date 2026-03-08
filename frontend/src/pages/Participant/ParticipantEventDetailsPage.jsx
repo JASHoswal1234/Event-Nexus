@@ -204,18 +204,8 @@ const ParticipantEventDetailsPage = () => {
 
   const handleSaveProfile = async () => {
     try {
-      // Save to backend
-      const response = await apiClient.post('/profiles', {
-        eventId,
-        name: participantProfile.name,
-        skills: participantProfile.skills,
-        role: participantProfile.role,
-        experience: participantProfile.experience,
-        interests: participantProfile.interests,
-        preferredTeamSize: participantProfile.preferredTeamSize
-      });
-      
-      // Also save to localStorage as backup
+      // Backend doesn't have /profiles endpoint
+      // Save to localStorage only
       localStorage.setItem(`participant_profile_${eventId}`, JSON.stringify(participantProfile));
       
       showToast('Profile saved successfully!', 'success');
@@ -227,27 +217,8 @@ const ParticipantEventDetailsPage = () => {
   };
 
   const loadProfile = async () => {
-    try {
-      // Try to load from backend first
-      const response = await apiClient.get(`/profiles/${eventId}`);
-      if (response.data.profile) {
-        const profile = response.data.profile;
-        setParticipantProfile({
-          name: profile.name || user?.name || '',
-          skills: profile.skills || [],
-          role: profile.role || '',
-          experience: profile.experience || '',
-          interests: profile.interests || [],
-          preferredTeamSize: profile.preferredTeamSize || 4
-        });
-        return;
-      }
-    } catch (error) {
-      // If backend fails, try localStorage
-      console.log('Loading from localStorage');
-    }
-    
-    // Fallback to localStorage
+    // Backend doesn't have /profiles endpoint
+    // Load from localStorage only
     const savedProfile = localStorage.getItem(`participant_profile_${eventId}`);
     if (savedProfile) {
       setParticipantProfile(JSON.parse(savedProfile));
