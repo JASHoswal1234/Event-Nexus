@@ -50,7 +50,22 @@ const corsOptions = {
     }
 
     // Check if request origin is in allowed list
-    if (allowedOriginsEnv.includes(origin)) {
+    const isAllowed = allowedOriginsEnv.some(allowedOrigin => {
+      // Exact match
+      if (allowedOrigin === origin) return true;
+      
+      // Pattern match for Vercel preview deployments
+      if (allowedOrigin.includes('vercel.app') && origin.includes('vercel.app')) {
+        // Allow any vercel.app subdomain if base domain is allowed
+        const allowedBase = allowedOrigin.replace(/https?:\/\/[^.]+\./, '');
+        const originBase = origin.replace(/https?:\/\/[^.]+\./, '');
+        return allowedBase === originBase;
+      }
+      
+      return false;
+    });
+
+    if (isAllowed) {
       callback(null, true);
     } else {
       console.log('CORS blocked origin:', origin);
