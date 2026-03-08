@@ -33,9 +33,9 @@ const { validate, teamSchema } = require('../middlewares/validate');
  * }
  * 
  * Requirements: 7.1, 7.2, 7.3, 7.5, 7.6
- * Access: Protected (authenticated users - both participants and admins can create teams)
+ * Access: Admin only
  */
-router.post('/', protect, validate(teamSchema), teamController.createTeam);
+router.post('/', protect, adminOnly, validate(teamSchema), teamController.createTeam);
 
 /**
  * POST /api/teams/join
