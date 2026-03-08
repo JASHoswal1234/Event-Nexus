@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from "../../components/common/Button";
+import { InteractiveHoverButton } from "../../components/ui/InteractiveHoverButton";
 import { HeroSection } from "../../components/landing/HeroSection";
 import { FeaturesSection } from "../../components/landing/FeaturesSection";
 
@@ -24,13 +24,11 @@ const LandingPage = () => {
           <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
             Join thousands of event organizers who trust EventNexus to deliver exceptional experiences.
           </p>
-          <Button 
-            type="button"
-            className="bg-white text-black hover:bg-gray-100"
+          <InteractiveHoverButton
+            text="Get Started"
             onClick={() => navigate('/register')}
-          >
-            Get Started
-          </Button>
+            className="mx-auto"
+          />
         </div>
       </section>
 
